@@ -4,17 +4,21 @@
 
 ## Выбор образа
 
-| Устройство | Каталог | esptool --chip |
-| --- | --- | --- |
-| ESP32 DevKit / WROOM-32 | esp32dev | esp32 |
-| ESP32-S3 DevKitC-1 | esp32s3 | esp32s3 |
-| ESP32-C3 DevKitM-1 | esp32c3 | esp32c3 |
-| ESP32-C6 DevKitC-1 | esp32c6 | esp32c6 |
-| ESP32-S2 Saola-1 | esp32s2 | esp32s2 |
-| ESP-WROVER-KIT | esp32wrover | esp32 |
-| UNIHIKER K10 | k10 | esp32s3 |
+| Устройство | Каталог | esptool --chip | Flash в образе |
+| --- | --- | --- | --- |
+| ESP32 DevKit / WROOM-32 | esp32dev | esp32 | 4 MB |
+| ESP32-S3 DevKitC-1 | esp32s3 | esp32s3 | 8 MB |
+| ESP32-C3 DevKitM-1 | esp32c3 | esp32c3 | 4 MB |
+| ESP32-C6 DevKitC-1 | esp32c6 | esp32c6 | 8 MB |
+| ESP32-S2 Saola-1 | esp32s2 | esp32s2 | 4 MB |
+| ESP-WROVER-KIT | esp32wrover | esp32 | 4 MB |
+| UNIHIKER K10 | k10 | esp32s3 | 16 MB |
 
 Не выбирайте образ только по наличию ESP32 в названии. Сверьте конкретную плату, chip и объём flash с flash-plan.json. Все профили используют разные бинарники. Минимальные сборки не содержат драйверов камеры, экрана, микрофона и ASR K10.
+
+Если у вашей модификации меньше flash, чем указано в образе, не используйте его:
+нужна отдельная сборка с подходящим board/flash layout. Например, S3 с 4 MB —
+не тот же готовый профиль, что DevKitC-1 с 8 MB. Не отключайте проверку чипа.
 
 ## Установка
 
