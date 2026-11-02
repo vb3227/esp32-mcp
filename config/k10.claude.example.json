@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "esp32_k10": {
+      "command": "C:/projects/esp32-mcp/.venv/Scripts/python.exe",
+      "args": [
+        "C:/projects/esp32-mcp/server.py",
+        "--profile",
+        "k10"
+      ],
+      "env": {
+        "ESP_MCP_CONNECTION": "direct",
+        "ESP_MCP_BOARD_URL": "http://192.0.2.1:8765",
+        "ESP_MCP_BOARD_TOKEN": "REPLACE_WITH_BOARD_TOKEN",
+        "ESP_MCP_VOICE_GATEWAY_PORT": "8777"
+      }
+    }
+  }
+}

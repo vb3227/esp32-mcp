@@ -1,0 +1,6 @@
+{
+  "name": "lua-vendored",
+  "version": "5.4.9",
+  "build": {},
+  "license": "MIT"
+}

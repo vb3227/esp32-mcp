@@ -1,0 +1,4 @@
+-r requirements.txt
+ruff==0.14.3
+numpy==2.3.3
+lupa==2.6

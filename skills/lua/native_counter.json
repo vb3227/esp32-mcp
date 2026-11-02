@@ -1,0 +1,10 @@
+{
+  "name": "native_counter",
+  "runtime": "lua",
+  "location": "device",
+  "voice_phrase": "native counter",
+  "aliases": [
+    "счетчик платы"
+  ],
+  "sha256": "3ab61f218ee67069e289c36876680fccd7b65a909a2e27550b482111d64e2901"
+}

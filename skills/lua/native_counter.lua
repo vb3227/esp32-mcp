@@ -1,0 +1,1 @@
+local n=device.state_get("runs") or 0; assert(device.state_set("runs",n+1)); return n+1

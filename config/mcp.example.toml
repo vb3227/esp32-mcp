@@ -1,0 +1,15 @@
+# Replace the absolute path and placeholder tokens; keep the real config local.
+[mcp_servers.esp32]
+command = "C:/projects/esp32-mcp/.venv/Scripts/python.exe"
+args = ["C:/projects/esp32-mcp/server.py"]
+
+[mcp_servers.esp32.env]
+ESP_MCP_CONNECTION = "direct"
+ESP_MCP_BOARD_URL = "http://192.0.2.1:8765"
+ESP_MCP_BOARD_TOKEN = "REPLACE_WITH_BOARD_TOKEN"
+ESP_MCP_VOICE_GATEWAY_PORT = "8777"
+# For relay, set ESP_MCP_CONNECTION="relay" and configure the gateway token:
+# ESP_MCP_VOICE_GATEWAY_TOKEN = "REPLACE_WITH_GATEWAY_TOKEN"
+# For --voice, add that argument to args and configure speech/router credentials:
+# GROQ_API_KEY = "REPLACE_WITH_YOUR_GROQ_KEY"
+# See docs/MCP_SETUP_RU.md. The board URL above is a documentation placeholder.

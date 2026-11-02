@@ -1,0 +1,9 @@
+{
+  "name": "python_sensor_average",
+  "runtime": "python",
+  "voice_phrase": "average sensors",
+  "aliases": [
+    "средние датчики"
+  ],
+  "sha256": "2067613f7324d9547831b033d06c6ea30df581e8d067250b78f51bfe82da0fbc"
+}
