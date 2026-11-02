@@ -3,6 +3,8 @@
 from pathlib import Path
 
 ROOT_FILES = {
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
     "README.md",
     "server.py",
     "AGENTS.md",

@@ -1,5 +1,8 @@
 # Установка ESP32 MCP
 
+Отдельная пошаговая инструкция для [Claude, ChatGPT Desktop/Web и Codex](AI_CLIENTS_RU.md)
+включает локальный STDIO, проверку инструментов и официальный Secure MCP Tunnel.
+
 ## 1. Что потребуется
 
 Python 3.11/3.12, VS Code с PlatformIO, USB-кабель с передачей данных, ESP32/ESP32-S3/ESP32-C3 либо UNIHIKER K10, совместимая Wi-Fi сеть. Для обычного MCP не нужны Groq, OpenAI API или отдельный Codex CLI: авторизация модели настраивается в вашем MCP-клиенте.

@@ -53,9 +53,15 @@
 #endif
 #if defined(CONFIG_BT_ENABLED) && CONFIG_BT_ENABLED && SOC_BT_SUPPORTED
 #define MCP_HAS_BLE 1
+#ifdef MCP_PROFILE_K10
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
+#else
+// BLE-only host avoids linking the classic Bluetooth host on generic ESP32.
+#include <NimBLEDevice.h>
+#define MCP_NIMBLE 1
+#endif
 #else
 #define MCP_HAS_BLE 0
 #endif

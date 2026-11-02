@@ -24,8 +24,13 @@ def main():
     parser.add_argument("--pio", default=shutil.which("pio") or shutil.which("platformio"))
     parser.add_argument("--jobs", type=int, default=2)
     parser.add_argument("--profiles", nargs="+", choices=PROFILES, default=list(PROFILES))
+    parser.add_argument(
+        "--artifact-dir",
+        type=Path,
+        help="Assemble previously built GitHub matrix artifacts (firmware-PROFILE folders)",
+    )
     args = parser.parse_args()
-    if not args.pio or not 1 <= args.jobs <= 8:
+    if (not args.pio and not args.artifact_dir) or not 1 <= args.jobs <= 8:
         parser.error("Install PlatformIO and choose 1..8 compiler jobs")
     files, issues = check(ROOT)
     if issues:
@@ -67,11 +72,24 @@ def main():
     manifest = {"credential_free": True, "api_version": 3, "profiles": []}
     secrets = [value.encode() for value in local_secrets(ROOT)]
     for profile in args.profiles:
-        command = [args.pio, "run", "-e", profile, "-j", str(args.jobs)]
-        print("Building public profile:", profile, flush=True)
-        subprocess.run(command, cwd=workspace, check=True)
-        build = workspace / ".pio/build" / profile
-        flash = json.loads((build / "flash_manifest.json").read_text(encoding="utf-8"))
+        if args.artifact_dir:
+            artifact = (args.artifact_dir / ("firmware-" + profile)).resolve()
+            plan = json.loads((artifact / "flash-plan.json").read_text(encoding="utf-8"))
+            if plan.get("profile") != profile:
+                raise SystemExit("Artifact profile mismatch")
+            images = []
+            for row in plan["images"]:
+                source = (artifact / row["file"]).resolve()
+                if source.parent != artifact or source.suffix != ".bin":
+                    raise SystemExit("Unsafe firmware artifact path")
+                images.append({"path": str(source), "offset": row["offset"]})
+            flash = {"chip": plan["chip"], "flash_size": plan["flash_size"], "images": images}
+        else:
+            command = [args.pio, "run", "-e", profile, "-j", str(args.jobs)]
+            print("Building public profile:", profile, flush=True)
+            subprocess.run(command, cwd=workspace, check=True)
+            build = workspace / ".pio/build" / profile
+            flash = json.loads((build / "flash_manifest.json").read_text(encoding="utf-8"))
         destination = output / profile
         destination.mkdir(exist_ok=True)
         entries = []
@@ -81,7 +99,13 @@ def main():
             if any(secret in data for secret in secrets):
                 raise SystemExit("Local credential detected; firmware release blocked")
             name = (
-                "firmware.bin" if source.name == "firmware.bin" else f"image-{index}-{source.name}"
+                source.name
+                if args.artifact_dir
+                else (
+                    "firmware.bin"
+                    if source.name == "firmware.bin"
+                    else f"image-{index}-{source.name}"
+                )
             )
             (destination / name).write_bytes(data)
             entries.append({"offset": item["offset"], "file": name})
@@ -116,6 +140,8 @@ def main():
         )
     (output / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     for source, name in (
+        (ROOT / "LICENSE", "LICENSE"),
+        (ROOT / "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md"),
         (ROOT / "docs/INSTALL_BIN_RU.md", "README.md"),
         (ROOT / "scripts/configure_device.py", "configure_device.py"),
         (ROOT / "config/mcp.example.toml", "mcp.example.toml"),
@@ -134,6 +160,7 @@ def main():
         + "https://github.com/espressif/arduino-esp32\nhttps://github.com/DFRobot/platform-unihiker\n"
         + "ESP-IDF: https://github.com/espressif/esp-idf (Apache-2.0)\n"
         + "LVGL (K10): https://github.com/lvgl/lvgl (MIT)\n"
+        + "NimBLE-Arduino 2.5.2: https://github.com/h2zero/NimBLE-Arduino (Apache-2.0)\n"
         + "ASR model assets are not included. Source/build scripts are distributed separately.\n",
         encoding="utf-8",
     )

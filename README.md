@@ -1,5 +1,15 @@
 # ESP32 MCP
 
+![ESP32 MCP](docs/assets/device-banner.svg)
+
+[![Source checks](https://github.com/vb3227/esp32-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/vb3227/esp32-mcp/actions/workflows/ci.yml)
+[![Firmware downloads](https://img.shields.io/github/v/release/vb3227/esp32-mcp)](https://github.com/vb3227/esp32-mcp/releases/latest)
+[![MIT license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+[Download firmware](https://github.com/vb3227/esp32-mcp/releases/latest) ·
+[Installation](docs/INSTALL_BIN_RU.md) · [Claude / ChatGPT / Codex](docs/AI_CLIENTS_RU.md) ·
+[Full setup](docs/MCP_SETUP_RU.md) · [Device drivers](docs/DEVICE_DRIVERS.md)
+
 **Hardware tools, reusable skills and on-device Lua for MCP coding agents.**
 
 Connect Codex, Claude or another MCP client to ESP32 over local Wi-Fi or an authenticated outbound relay. Run existing operations, compose saved skills, or upload Lua without rebuilding firmware. The default tools server needs no model key: your MCP client supplies the intelligence.
@@ -105,4 +115,5 @@ python scripts/package_source.py
 
 Packaging explicitly selects sources, excluding credentials, runtime data, captures, caches, firmware and build output. Review the resulting archive. [Security](SECURITY.md) Â· [Contributing](CONTRIBUTING.md) Â· [Architecture](docs/ARCHITECTURE.md).
 
-Author: **vb3227**. A project-wide license has not yet been chosen; bundled Lua retains its upstream license. Choose distribution terms before advertising this as open source.
+Author: **vb3227**. Original project code is [MIT licensed](LICENSE).
+Bundled components retain their [upstream licenses](THIRD_PARTY_NOTICES.md).

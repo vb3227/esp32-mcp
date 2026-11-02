@@ -197,8 +197,14 @@ int bleStart(lua_State *L) {
     if (bleOwner < 0 && (bleStarted || ESP.getFreeHeap() > 120000)) {
         if (!bleStarted) { BLEDevice::init("ESP32 MCP"); bleStarted = true; }
         BLEServer *server = BLEDevice::createServer(); BLEService *service = server ? server->createService(serviceId) : nullptr;
+#ifdef MCP_NIMBLE
+        bleCharacteristic = service ? service->createCharacteristic(characteristicId, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::NOTIFY, 128) : nullptr;
+        if (bleCharacteristic) { server->start(); BLEDevice::getAdvertising()->addServiceUUID(serviceId); ok = BLEDevice::getAdvertising()->start(); }
+#else
         bleCharacteristic = service ? service->createCharacteristic(characteristicId, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY) : nullptr;
-        if (bleCharacteristic) { service->start(); BLEDevice::getAdvertising()->addServiceUUID(serviceId); BLEDevice::getAdvertising()->start(); bleOwner = current(L) - jobs; ok = true; }
+        if (bleCharacteristic) { service->start(); BLEDevice::getAdvertising()->addServiceUUID(serviceId); BLEDevice::getAdvertising()->start(); ok = true; }
+#endif
+        if (ok) bleOwner = current(L) - jobs;
     }
     xSemaphoreGive(peripheralLock); if (!ok) return luaL_error(L, "BLE leased, unsupported configuration or insufficient heap"); return 0;
 #else
@@ -218,7 +224,7 @@ int bleValue(lua_State *L) {
 }
 int bleStop(lua_State *L) {
 #if MCP_HAS_BLE
-    xSemaphoreTake(peripheralLock, portMAX_DELAY); if (bleOwner == current(L) - jobs) { BLEDevice::getAdvertising()->stop(); BLEDevice::deinit(false); bleStarted = false; bleCharacteristic = nullptr; bleOwner = -1; } xSemaphoreGive(peripheralLock);
+    xSemaphoreTake(peripheralLock, portMAX_DELAY); if (bleOwner == current(L) - jobs) { BLEDevice::getAdvertising()->stop(); BLEDevice::deinit(true); bleStarted = false; bleCharacteristic = nullptr; bleOwner = -1; } xSemaphoreGive(peripheralLock);
 #endif
     return 0;
 }
@@ -227,7 +233,7 @@ void releaseNetworkIo(Job *job) {
     xSemaphoreTake(peripheralLock, portMAX_DELAY);
     if (espNowOwner == owner) { esp_now_unregister_recv_cb(); esp_now_deinit(); espNowOwner = -1; }
 #if MCP_HAS_BLE
-    if (bleOwner == owner) { BLEDevice::getAdvertising()->stop(); BLEDevice::deinit(false); bleStarted = false; bleCharacteristic = nullptr; bleOwner = -1; }
+    if (bleOwner == owner) { BLEDevice::getAdvertising()->stop(); BLEDevice::deinit(true); bleStarted = false; bleCharacteristic = nullptr; bleOwner = -1; }
 #endif
     xSemaphoreGive(peripheralLock);
 }
