@@ -36,6 +36,12 @@ Pin access does not imply electrical compatibility. Adding a UART/PWM/custom sen
 
 These five additional variants cover common development-board families, not a measured top-five sales/popularity ranking. Vendor chip families: [Espressif portfolio](https://dl.espressif.com/public/Espressif%20SoC%20Product%20Portfolio.pdf). Board definitions are taken from the pinned PlatformIO platform.
 
+Classic ESP32/WROVER pin PlatformIO espressif32 6.12.0 (Arduino 2.0.17) to fit
+the complete interface set within their IRAM. S2/S3/C3/C6 use espressif32 8.0.0;
+K10 uses its vendor platform. Version guards preserve the same Lua API across
+the SDKs. Generic Bluetooth-capable targets use NimBLE-Arduino 2.5.2; S2 excludes
+BLE entirely because the chip has no Bluetooth radio. K10 retains vendor BLE.
+
 Minimal environments compile only src/core and src/boards/generic. They do not compile the K10 screen, camera, microphone, ASR, RGB/sensor adapter or its vendor framework. Their MCP client uses --profile generic (the tools-mode default), which omits K10 media/voice/UI tools. Full K10 uses --profile k10, or --voice which selects it by default.
 
 A single source tree avoids maintaining seven drifting copies. Every environment produces its own chip-specific binary; binaries are not interchangeable. The source release does not include credential-bearing flashed images. All boards require local Wi-Fi/token configuration before use.

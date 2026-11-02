@@ -195,8 +195,14 @@ int bleStart(lua_State *L) {
     if ((strlen(serviceId) != 4 && strlen(serviceId) != 36) || (strlen(characteristicId) != 4 && strlen(characteristicId) != 36)) return luaL_error(L, "BLE UUID length must be 4 or 36");
     hardwareCall(L); xSemaphoreTake(peripheralLock, portMAX_DELAY); bool ok = false;
     if (bleOwner < 0 && (bleStarted || ESP.getFreeHeap() > 120000)) {
-        if (!bleStarted) { BLEDevice::init("ESP32 MCP"); bleStarted = true; }
-        BLEServer *server = BLEDevice::createServer(); BLEService *service = server ? server->createService(serviceId) : nullptr;
+        if (!bleStarted) {
+#ifdef MCP_NIMBLE
+            bleStarted = BLEDevice::init("ESP32 MCP");
+#else
+            BLEDevice::init("ESP32 MCP"); bleStarted = true;
+#endif
+        }
+        BLEServer *server = bleStarted ? BLEDevice::createServer() : nullptr; BLEService *service = server ? server->createService(serviceId) : nullptr;
 #ifdef MCP_NIMBLE
         bleCharacteristic = service ? service->createCharacteristic(characteristicId, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::NOTIFY, 128) : nullptr;
         if (bleCharacteristic) { server->start(); BLEDevice::getAdvertising()->addServiceUUID(serviceId); ok = BLEDevice::getAdvertising()->start(); }
@@ -205,6 +211,7 @@ int bleStart(lua_State *L) {
         if (bleCharacteristic) { service->start(); BLEDevice::getAdvertising()->addServiceUUID(serviceId); BLEDevice::getAdvertising()->start(); ok = true; }
 #endif
         if (ok) bleOwner = current(L) - jobs;
+        else { BLEDevice::deinit(true); bleStarted = false; bleCharacteristic = nullptr; }
     }
     xSemaphoreGive(peripheralLock); if (!ok) return luaL_error(L, "BLE leased, unsupported configuration or insufficient heap"); return 0;
 #else
