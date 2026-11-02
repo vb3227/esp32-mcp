@@ -17,7 +17,7 @@ Publishing source does not publish firmware, credentials or media. Review `dist/
 
 ## Current validation snapshot
 
-- 96 Python tests passed, including real MCP SDK stdio interaction, restricted Python execution, pin-policy validation, host USB-configuration input bounds, API-v3 background/message contracts and recovery after failed Codex session startup. CI repeats the host suite on Windows/Linux with Python 3.11/3.12.
+- 100 Python tests passed, including real MCP SDK stdio interaction, restricted Python execution, pin-policy validation, host USB-configuration input bounds, API-v3 background/message contracts, recovery after failed Codex session startup and tunnel-watchdog outage/recovery behavior. CI repeats the host suite on Windows/Linux with Python 3.11/3.12.
 - All 32 generated driver programs (foreground/background variants) compile in a real Lua 5.4 test VM and fit the 4096-byte source limit. NRF register/TX/control-pin simulation, BMP280 datasheet compensation and SHT31 CRC rejection passed. These simulations do not establish electrical compatibility or physical module behavior.
 - Physical K10 acceptance: 44 of 45 checks passed on the tested API-v2 firmware. Four concurrent native Lua jobs and four hardware jobs were exercised, along with JSON reuse/aliases, NVS skill state, GPIO/ADC/PWM/UART/I2C, display/RGB/sensors, microphone/ASR status, camera preview, JPEG and AVI saving, host Python, resource limits/cancellation and recovery.
 - Wi-Fi connectivity/MCP relay passed; Wi-Fi scanning failed. A later driver workaround is present in source but not hardware-validated; scanning is not claimed working.
